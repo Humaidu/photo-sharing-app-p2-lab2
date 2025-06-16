@@ -4,6 +4,14 @@ This project is a **serverless photo-sharing web application** built entirely wi
 
 ---
 
+## Live App
+
+**http://photo-sharing-app-frontend-050.s3-website-eu-west-1.amazonaws.com/**
+
+![photo sharing app frontend](screenshots/photo-sharing-app-frontend.png)
+
+---
+
 ## Features
 
 * Upload photos to Amazon S3 via pre-signed URLs
@@ -100,7 +108,7 @@ All Lambda function code is written in Python and provided earlier in this repo.
 
 ---
 
-### 4. 🌐 API Gateway Configuration
+### 4.API Gateway Configuration
 
 Create a REST API with these routes:
 
@@ -150,11 +158,97 @@ async function displayImages() {
 
 ---
 
+## 💻 Frontend
+### `/index.html`
+
+Basic HTML+JS page to upload and view images. The JavaScript:
+
+- Calls `/getUploadUrl?filename=xyz.jpg`
+- Uploads image using `fetch(PUT, presignedURL)`
+- Loads thumbnails from `/getThumbnailImages`
+
+---
+
+## 🚀 Deploying the Frontend to AWS S3
+
+You can deploy the frontend using **S3 Static Website Hosting**.
+
+### Step 1: Enable Website Hosting
+
+```bash
+aws s3 website s3://photo-sharing-app-frontend-050/ \
+  --index-document index.html \
+  --error-document index.html
+```
+### Step 2: Make Bucket Public
+
+**Create a file named `bucket-policy.json`:**
+
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublicReadGetObject",
+      "Effect": "Allow",
+      "Principal": "*",
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::photo-sharing-app-frontend-050/*"
+    }
+  ]
+}
+
+```
+**Apply the policy:**
+
+```
+aws s3api put-bucket-policy \
+  --bucket photo-sharing-app-frontend-050 \
+  --policy file://bucket-policy.json
+
+```
+
+**Allow public access:**
+
+```
+aws s3api put-public-access-block \
+  --bucket photo-sharing-app-frontend-050 \
+  --public-access-block-configuration BlockPublicAcls=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false
+
+```
+
+### Step 3: Upload Files
+
+```
+aws s3 sync ./frontend/ s3://photo-sharing-app-frontend-050/ --recursive 
+
+```
+### Step 4: Access Your Site
+
+**Visit:**
+
+```
+http://photo-sharing-app-frontend-050.s3-website-eu-west-1.amazonaws.com
+
+```
+⚠️ Note: Don't use the S3 REST endpoint (.s3.amazonaws.com) directly; it will show Access Denied unless you specify the full index.html.
+
+---
+
 ## Security Notes
 
 * All uploads use time-limited pre-signed URLs
 * No public write access to S3
 * CORS headers are enabled to support frontend requests
+
+---
+
+## Example Usage
+
+- Visit the frontend.
+- Upload an image.
+- Lambda resizes it.
+- Thumbnails are displayed in the gallery.
 
 ---
 
