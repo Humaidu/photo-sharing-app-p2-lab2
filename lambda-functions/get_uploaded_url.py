@@ -34,7 +34,7 @@ def lambda_handler(event, context):
             Params={
                 'Bucket': BUCKET_NAME,  # Target bucket
                 'Key': filename,        # Name of the file to be uploaded
-                'ContentType': 'image/jpeg'  # Required MIME type for the file
+                'ContentType': 'image/jpeg',
             },
             ExpiresIn=3600  # URL expiration time in seconds (1 hour)
         )

@@ -306,6 +306,50 @@ Make sure this URI is added to the Allowed Callback URLs and Sign Out URLs in yo
 
 ---
 
+## DynamoDB Integration
+
+This application integrates **Amazon DynamoDB** to store metadata for each uploaded image. The metadata is captured during the image upload and thumbnail generation workflow.
+
+### Workflow Overview
+
+1. The user uploads an image to an S3 bucket using a **presigned URL**.
+2. The **user's email address** (from Cognito) is attached as object metadata (`x-amz-meta-email`) during upload.
+3. An S3 **event trigger** invokes the `image_resizer.py` Lambda function.
+4. This function:
+   - Downloads and resizes the image to generate a thumbnail.
+   - Uploads the thumbnail to a separate S3 bucket or prefix.
+   - Extracts metadata (e.g., `email`) from the original object.
+   - Writes metadata to **DynamoDB**.
+
+---
+
+### DynamoDB Table Structure
+
+The table is created using the AWS Console or Infrastructure as Code with the following attributes:
+
+| Attribute     | Type   | Key            | Description                                  |
+|---------------|--------|----------------|----------------------------------------------|
+| `image_id`    | String | Partition Key  | The S3 key of the original uploaded image    |
+| `thumbnail`   | String | —              | S3 key of the generated thumbnail            |
+| `email`       | String | —              | Uploader’s email address (from Cognito)      |
+| `upload_time` | String | —              | ISO 8601 timestamp of the image upload       |
+
+---
+
+### Sample Item
+
+```json
+{
+  "image_id": "uploads/photo1.jpg",
+  "thumbnail": "thumbnails/thumb-photo1.jpg",
+  "email": "jane.doe@example.com",
+  "upload_time": "2025-06-16T18:25:43Z"
+}
+
+```
+
+---
+
 ## Security Notes
 
 * All uploads use time-limited pre-signed URLs
@@ -333,8 +377,6 @@ Make sure this URI is added to the Allowed Callback URLs and Sign Out URLs in yo
 
 ## Future Improvements
 
-* Add user authentication via AWS Cognito
-* Add metadata (titles, tags, comments)
 * Add delete image feature
 * UI/UX enhancements using frameworks like React or Vue
 
