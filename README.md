@@ -235,6 +235,77 @@ http://photo-sharing-app-frontend-050.s3-website-eu-west-1.amazonaws.com
 
 ---
 
+## User Authentication for Photo Sharing App
+
+This document explains the **user authentication system** used in the [Photo Sharing App](https://d3se36oyslytfb.cloudfront.net) built with a static frontend hosted on **Amazon S3/CloudFront** and backend services integrated with **AWS Cognito**, **Lambda**, and **API Gateway**.
+
+---
+
+### Overview
+
+The authentication mechanism uses **Amazon Cognito User Pools** with the **Hosted UI** flow to manage:
+
+- User sign-up & sign-in
+- Token-based authentication (ID token & access token)
+- Session persistence via `localStorage`
+- Access-controlled navigation (e.g., `upload.html` requires authentication)
+
+---
+
+### Tech Stack
+
+| Component       | Technology                         |
+|----------------|-------------------------------------|
+| Auth Provider   | AWS Cognito User Pool (Hosted UI)   |
+| Frontend        | HTML/CSS/JavaScript (static hosting)|
+| Storage         | AWS S3 (static site + image uploads)|
+| Edge Delivery   | AWS CloudFront                     |
+| APIs            | AWS API Gateway + Lambda           |
+
+---
+
+### Authentication Flow
+
+1. When user clicks **Login**, they are redirected to the Cognito Hosted UI.
+2. After successful login, Cognito redirects the user back to `upload.html` with an authorization code.
+3. The frontend exchanges this code for **ID** and **access tokens** via `/oauth2/token`.
+4. Tokens are stored in `localStorage` for session persistence.
+5. The app decodes the token to:
+   - Show/hide Login or Logout buttons
+   - Conditionally load private pages like `upload.html`
+
+### Redirect URIs
+
+Your app uses the following redirect after authentication:
+
+```js
+const redirectUri = "https://d3se36oyslytfb.cloudfront.net/upload.html";
+
+```
+Make sure this URI is added to the Allowed Callback URLs and Sign Out URLs in your Cognito App Client settings.
+
+
+### Testing Auth Flow
+
+- Click Login
+- Authenticate via Cognito UI
+- You’ll be redirected to upload.html
+- The app will:
+  - Display your email
+  - Enable logout
+  - Load uploaded images (if any)
+- Click Logout → Returns to index.html
+
+
+## Notes
+
+- Ensure Cognito App Client has no client secret (public client).
+- All redirect URIs must be HTTPS (required by Cognito).
+- Only users with valid tokens can access image upload functionality.
+
+
+---
+
 ## Security Notes
 
 * All uploads use time-limited pre-signed URLs
