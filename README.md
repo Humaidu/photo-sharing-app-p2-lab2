@@ -6,9 +6,9 @@ This project is a **serverless photo-sharing web application** built entirely wi
 
 ## Live App
 
-**http://photo-sharing-app-frontend-050.s3-website-eu-west-1.amazonaws.com/**
+**https://d3se36oyslytfb.cloudfront.net/index.html**
 
-![photo sharing app frontend](screenshots/photo-sharing-app-frontend.png)
+![photo sharing app frontend](screenshots/photo-sharing-app-frontend-home-ui.png.png)
 
 ---
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Photo Sharing App - Home</title>
+    <title>Photo Sharing App - Upload</title>
     <link rel="stylesheet" href="styles.css" />
     <script src="script.js"></script>
   </head>
@@ -13,20 +13,18 @@
 
       <div class="menu">
         <a href="index.html">Home</a>
-        <a id="uploadLink" href="upload.html">Upload Image</a>
         <a id="loginBtn" onclick="redirectToLogin()">Login</a>
         <a id="logoutBtn" onclick="logout()" style="display: none">Logout</a>
       </div>
     </nav>
 
-    <div class="home-container">
-      <h1>Welcome to the Photo Sharing App</h1>
-      <p>Upload and share your images securely.</p>
+    <h1>Upload an Image</h1>
+    <input type="file" id="uploadFile" />
+    <button onclick="uploadImage()">Upload</button>
 
-      <button id="loginBtn" onclick="redirectToLogin()">Login</button>
-      <button id="logoutBtn" onclick="logout()" style="display: none">
-        Logout
-      </button>
+    <div class="gallery-container">
+      <h2>Gallery</h2>
+      <div id="gallery"></div>
     </div>
   </body>
 </html>
