@@ -8,7 +8,7 @@ This project is a **serverless photo-sharing web application** built entirely wi
 
 **https://d3se36oyslytfb.cloudfront.net/index.html**
 
-![photo sharing app frontend](screenshots/photo-sharing-app-frontend-home-ui.png.png)
+![photo sharing app frontend](screenshots/photo-sharing-app-frontend-home-ui.png)
 
 ---
 
